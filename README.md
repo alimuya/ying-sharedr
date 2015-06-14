@@ -1,2 +1,2 @@
 # ying-sharedr
-Multi-Process Shared Memory, no version , just coding
+Multi-Process Shared Data, no version , just coding
