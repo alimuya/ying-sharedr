@@ -2,18 +2,13 @@ package com.alimuya.ying.sharedr;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
-import java.io.Serializable;
 import java.nio.channels.FileLock;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import com.alimuya.ying.sharedr.IFileWatcher.Event;
 import com.alimuya.ying.sharedr.IFileWatcher.IFileWatcherListner;
@@ -24,9 +19,9 @@ import com.alimuya.ying.sharedr.IFileWatcher.IFileWatcherListner;
  *
  */
 public class ProcessStub {
-	private String name;
+	private String processName;
 	private volatile boolean isFresh=false;
-	private String fileName;
+	private File processFile;
 	private int pid;
 	private final boolean isSelf;
 	private IProcessManager processManager;
@@ -35,34 +30,37 @@ public class ProcessStub {
 
 		@Override
 		public void onChange(String path, Event event) {
-			if(!ProcessStub.this.isSelf && path.equals(fileName)){
+			if(!ProcessStub.this.isSelf && path.equals(processFile.getAbsolutePath())){
 				ProcessStub.this.isFresh=false;
 			}
 		}
 	};
 	
-	public  ProcessStub (String name){
+	public  ProcessStub (File dir,String processName){
+		String fileName=dir.getAbsoluteFile()+"/"+processName;
+		this.processFile=new File(fileName);
+		this.processName=processName;
 		isSelf=true;
-		if(isSelf){
-			isFresh=true;
-		}else{
-			isFresh=false;
-		}
-		this.name=name;
+		isFresh=true;
 	}
 
+	public ProcessStub (File processFile){
+		isSelf=false;
+		isFresh=false;
+	}
+	
+	
 	public boolean isValid(){
 		return false;
 	}
 	
 	public void sync() throws IOException{
-		serializing(new File(fileName));
+		serializing(processFile);
 	}
 	
 	
-	private void lockSelfFile() throws IOException{
-		final File file=new File(fileName);
-		final RandomAccessFile raf=new RandomAccessFile(fileName, "rw");
+	private void lockSelfProcessFile() throws IOException{
+		final RandomAccessFile raf=new RandomAccessFile(processFile, "rw");
 		final FileLock lock = raf.getChannel().lock();
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 
@@ -71,7 +69,7 @@ public class ProcessStub {
 				try {
 					lock.release();
 					raf.close();
-					file.delete();
+					processFile.delete();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -82,7 +80,7 @@ public class ProcessStub {
 	
 	private void refresh(){
 		try {
-			deserializing(new File(fileName));
+			deserializing(processFile);
 			this.isFresh=true;
 		} catch (Exception e) {
 			e.printStackTrace();
