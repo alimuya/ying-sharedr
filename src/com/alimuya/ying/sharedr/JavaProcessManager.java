@@ -3,6 +3,7 @@ package com.alimuya.ying.sharedr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 
@@ -13,18 +14,18 @@ public class JavaProcessManager implements IProcessManager{
 	@Override
 	public boolean isRunning(int pid) {
 		String line;
-		if (OS.isFamilyWindows()) {
-	        //tasklist exit code is always 0. Parse output
-	        //findstr exit code 0 if found pid, 1 if it doesn't
-	        line = "cmd /c \"tasklist /FI \"PID eq " + pid + "\" | findstr " + pid + "\"";
-	    }
-	    else {
-	        //ps exit code 0 if process exists, 1 if it doesn't
-	        line = "ps -p " + pid;
-	    }
+//		if (OS.isFamilyWindows()) {
+//	        //tasklist exit code is always 0. Parse output
+//	        //findstr exit code 0 if found pid, 1 if it doesn't
+//	        line = "cmd /c \"tasklist /FI \"PID eq " + pid + "\" | findstr " + pid + "\"";
+//	    }
+//	    else {
+//	        //ps exit code 0 if process exists, 1 if it doesn't
+//	        line = "ps -p " + pid;
+//	    }
 		Process proc;
         try {
-            proc = Runtime.getRuntime().exec(line);//"tasklist"
+            proc = Runtime.getRuntime().exec("tasklist");//"tasklist"
             BufferedReader br = new BufferedReader(new InputStreamReader(proc
                     .getInputStream()));
             String info = br.readLine();

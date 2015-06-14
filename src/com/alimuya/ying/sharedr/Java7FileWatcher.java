@@ -9,6 +9,8 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ov_alimuya
@@ -16,6 +18,7 @@ import java.nio.file.WatchService;
  */
 public class Java7FileWatcher implements IFileWatcher {
 	private WatchService watchService;
+	private List<IFileWatcherListner> listeners=new ArrayList<IFileWatcherListner>();
 	private Thread watchThread = new Thread() {
 
 		@Override
@@ -28,11 +31,23 @@ public class Java7FileWatcher implements IFileWatcher {
 						if (kind == StandardWatchEventKinds.OVERFLOW) {
 							continue;
 						}
+						
+						String path = (String)watchEvent.context();
+						Event event = null;
 						if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
+							event=Event.create;
 						}
 						if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+							event=Event.write;
 						}
 						if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
+							event=Event.delete;
+						}
+						if(event!=null){
+							int length=listeners.size();
+							for (int i = 0; i < length; i++) {
+								listeners.get(i).onChange(path, event);
+							}
 						}
 					}
 					boolean valid = key.reset();
@@ -70,8 +85,9 @@ public class Java7FileWatcher implements IFileWatcher {
 
 	@Override
 	public void regFileWatcherListner(IFileWatcherListner listner) {
-		// TODO Auto-generated method stub
-
+		if(listner!=null){
+			this.listeners.add(listner);
+		}
 	}
 
 }
