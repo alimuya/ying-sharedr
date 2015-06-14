@@ -1,4 +1,4 @@
-package com.alimuya.ying.sharedr;
+package com.alimuya.ying.sharedr.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -10,27 +10,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * @author ov_alimuya
+ *
+ */
 public class FileUtils {
-	/**
-	 * 写文件
-	 * 
-	 * @param bs
-	 * @param file_path
-	 * @throws IOException
-	 */
+	
 	public static void writeBytesFile(byte[] bs, String file_path)
 			throws IOException {
 		writeBytesFile(bs, file_path, false);
 	}
 
-	/**
-	 * 写文件，支持append
-	 * 
-	 * @param bs
-	 * @param file
-	 * @param append
-	 * @throws IOException
-	 */
+	
 	public static void writeBytesFile(byte[] bs, String file_path,
 			boolean append) throws IOException {
 		File file = new File(file_path);
@@ -44,13 +35,6 @@ public class FileUtils {
 		}
 	}
 
-	/**
-	 * 读文件
-	 * 
-	 * @param file_path
-	 * @return
-	 * @throws IOException
-	 */
 	public static byte[] readBytesFile(String file_path) throws IOException {
 		File file = new File(file_path);
 		if (!file.isFile()) {
@@ -112,15 +96,6 @@ public class FileUtils {
 		}
 	}
 
-	/**
-	 * 拷贝文件
-	 * 
-	 * @param inFile
-	 *            源文件
-	 * @param outFile
-	 *            目标文件
-	 * @throws IOException
-	 */
 	public static void copyFile(File inFile, File outFile) throws IOException {
 	    createDir(outFile.getParentFile());
 		FileInputStream fis = new FileInputStream(inFile);
@@ -137,15 +112,6 @@ public class FileUtils {
 		}
 	}
 
-	/**
-	 * 拷贝文件夹(包括子文件夹)
-	 * 
-	 * @param sourceDir
-	 *            源文件夹
-	 * @param destDir
-	 *            目标文件夹
-	 * @throws IOException
-	 */
 	public static void copyDir(File sourceDir, File destDir) throws IOException {
 		createDir(destDir);
 		File[] files = sourceDir.listFiles();
@@ -163,12 +129,6 @@ public class FileUtils {
 		}
 	}
 
-	/**
-	 * 删除文件夹(包括子文件夹,子文件)注意,最后删除自己
-	 * 
-	 * @param dir
-	 * @return
-	 */
 	public static void deleteDir(File dir) {
 		if (dir.isDirectory()) {
 			File[] files = dir.listFiles();
@@ -185,22 +145,10 @@ public class FileUtils {
 		}
 	}
 
-	/**
-	 * 删除文件的操作类
-	 * 
-	 * @param file
-	 * @return
-	 */
 	public static boolean deleteFile(String path) {
 		return new File(path).delete();
 	}
 
-	/**
-	 * 返回文件长度
-	 * 
-	 * @param path
-	 * @return
-	 */
 	public static long getFileLength(String path) {
 		return new File(path).length();
 	}
@@ -219,23 +167,10 @@ public class FileUtils {
         }
     }
 
-	/**
-	 * 最后修改时间
-	 * 
-	 * @param path
-	 * @return
-	 */
 	public static long getLastModified(String path) {
 		return new File(path).lastModified();
 	}
 
-
-	/**
-	 * 重命名
-	 * 
-	 * @param src
-	 * @param dest
-	 */
 	public static boolean rename(String src, String dest) {
 		File srcFile = new File(src);
 		File destFile = new File(dest);
